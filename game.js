@@ -16,14 +16,15 @@ const stick = document.getElementById('stick');
 
 const W = canvas.width;
 const H = canvas.height;
-const highscoreKey = 'moewenpikHighscoreV4';
+const highscoreKey = 'moewenpikHighscoreV5';
 let highscore = Number(localStorage.getItem(highscoreKey) || 0);
 highscoreEl.textContent = highscore;
 
 let state = 'start';
 let frame = 0;
 let score = 0;
-let lives = 3;
+let health = 6; // 6 = drei volle Herzen, 1 = halbes Herz
+let snackStreak = 0;
 let level = 1;
 let speed = 5.2;
 let invincible = 0;
@@ -35,7 +36,7 @@ let grass = [];
 let particles = [];
 let musicOn = false;
 
-const input = { joyX: 0, joyY: 0, flapHeld: false, keys: new Set() };
+const input = { joyX: 0, joyY: 0, flapHeld: false, keys: new Set(), joyPointer: null };
 const gull = {
   x: 205,
   y: 330,
@@ -52,7 +53,8 @@ function resetGame() {
   state = 'playing';
   frame = 0;
   score = 0;
-  lives = 3;
+  health = 6;
+  snackStreak = 0;
   level = 1;
   speed = 5.2;
   invincible = 0;
@@ -73,7 +75,10 @@ function updateHud() {
   scoreEl.textContent = score;
   levelEl.textContent = level;
   highscoreEl.textContent = highscore;
-  heartsEl.textContent = Array.from({ length: 3 }, (_, i) => i < lives ? '♥' : '♡').join(' ');
+  heartsEl.textContent = Array.from({ length: 3 }, (_, i) => {
+    const v = health - i * 2;
+    return v >= 2 ? '♥' : (v === 1 ? '◐' : '♡');
+  }).join(' ');
 }
 
 function startGameFromButton() {
@@ -103,7 +108,7 @@ function spawnSnack() {
 }
 
 function spawnTourist() {
-  const kinds = ['schirm', 'hand', 'handy', 'wasser'];
+  const kinds = ['schirm', 'hand', 'handy'];
   tourists.push({
     x: W + 90,
     y: 570,
@@ -114,7 +119,7 @@ function spawnTourist() {
     shirt: ['#ffdc69', '#83c9f4', '#ff9878', '#a4db78'][Math.floor(Math.random() * 4)],
     angry: false,
     cooldown: 30 + Math.random() * 45,
-    attack: null
+    swatWindow: 0
   });
 }
 
@@ -188,15 +193,62 @@ function drawSyltDetails() {
 function drawGull() {
   ctx.save(); ctx.translate(gull.x, gull.y); ctx.rotate(gull.rot);
   if (invincible > 0 && Math.floor(frame / 5) % 2 === 0) ctx.globalAlpha = .55;
-  const wingBeat = Math.sin(frame / 5) * 10 + gull.flapPulse * 4;
-  ctx.strokeStyle = '#173042'; ctx.lineWidth = 5; ctx.fillStyle = '#fffaf0';
-  ctx.beginPath(); ctx.ellipse(0, 0, 44, 25, -.08, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-  ctx.beginPath(); ctx.ellipse(31, -15, 24, 18, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = '#f8f8f2'; ctx.beginPath(); ctx.moveTo(-10, -8); ctx.quadraticCurveTo(-74, -64 + wingBeat, -104, -8 + wingBeat); ctx.quadraticCurveTo(-54, -17, -12, 18); ctx.closePath(); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = '#9ea7ad'; ctx.beginPath(); ctx.moveTo(-49, -20 + wingBeat * .25); ctx.lineTo(-82, -7 + wingBeat); ctx.lineTo(-45, 2); ctx.closePath(); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = '#ffb13d'; ctx.beginPath(); ctx.moveTo(50, -15); ctx.lineTo(90, -6); ctx.lineTo(51, 4); ctx.closePath(); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = '#173042'; ctx.beginPath(); ctx.arc(35, -20, 4, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = '#173042'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(31, -10, 6, .15, Math.PI); ctx.stroke();
-  ctx.fillStyle = '#ffb13d'; ctx.strokeStyle = '#173042'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(-26, 22); ctx.lineTo(-36, 43); ctx.lineTo(-15, 29); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-3, 24); ctx.lineTo(-9, 46); ctx.lineTo(11, 31); ctx.closePath(); ctx.fill(); ctx.stroke();
+  const beat = Math.sin(frame / 5.5) * 8 + gull.flapPulse * 3.6;
+
+  // Schwanzfedern
+  ctx.strokeStyle = '#173042'; ctx.lineWidth = 4; ctx.fillStyle = '#e9eef0';
+  ctx.beginPath(); ctx.moveTo(-48, -8); ctx.lineTo(-82, -23); ctx.lineTo(-64, 0); ctx.lineTo(-84, 22); ctx.lineTo(-45, 10); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#5f6b72';
+  ctx.beginPath(); ctx.moveTo(-75, -18); ctx.lineTo(-59, -3); ctx.lineTo(-46, -7); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-78, 18); ctx.lineTo(-58, 5); ctx.lineTo(-45, 10); ctx.closePath(); ctx.fill();
+
+  // Hinterer Flügel mit grauer Spitze
+  ctx.fillStyle = '#f4f5f0'; ctx.strokeStyle = '#173042'; ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(-8, -7);
+  ctx.quadraticCurveTo(-56, -62 + beat, -126, -30 + beat * .75);
+  ctx.quadraticCurveTo(-78, -13 + beat * .35, -10, 17);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#7d878d'; ctx.beginPath();
+  ctx.moveTo(-82, -39 + beat * .7); ctx.quadraticCurveTo(-110, -38 + beat * .7, -126, -30 + beat * .75); ctx.lineTo(-86, -16 + beat * .35); ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // Körper mit Brust und Schatten
+  const body = ctx.createLinearGradient(-45, -18, 42, 22);
+  body.addColorStop(0, '#dfe5e8'); body.addColorStop(.35, '#fffdf2'); body.addColorStop(1, '#f8f2df');
+  ctx.fillStyle = body;
+  ctx.beginPath(); ctx.ellipse(0, 0, 47, 24, -.06, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = 'rgba(95,107,114,.18)'; ctx.beginPath(); ctx.ellipse(-14, 11, 29, 8, -.08, 0, Math.PI * 2); ctx.fill();
+
+  // Vorderer Flügel
+  ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#173042'; ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(-4, 0);
+  ctx.quadraticCurveTo(-43, -82 + beat, -105, -58 + beat);
+  ctx.quadraticCurveTo(-62, -35 + beat * .45, -13, 20);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#606b72';
+  for (let i=0;i<4;i++) {
+    ctx.beginPath();
+    ctx.moveTo(-64 - i*9, -50 + beat * .8 + i*3);
+    ctx.lineTo(-99 - i*2, -58 + beat + i*4);
+    ctx.lineTo(-70 - i*6, -35 + beat * .55 + i*4);
+    ctx.closePath(); ctx.fill();
+  }
+
+  // Kopf, Auge, Schnabel
+  ctx.fillStyle = '#fffdf2'; ctx.strokeStyle = '#173042'; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.ellipse(33, -16, 25, 18, -.08, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#ffb13d'; ctx.beginPath(); ctx.moveTo(53, -15); ctx.lineTo(94, -8); ctx.lineTo(54, 3); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = '#b35f1e'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(62, -7); ctx.lineTo(89, -7); ctx.stroke();
+  ctx.fillStyle = '#173042'; ctx.beginPath(); ctx.arc(39, -21, 4.5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(40.5, -22.5, 1.4, 0, Math.PI * 2); ctx.fill();
+
+  // Beine/Füsse
+  ctx.strokeStyle = '#173042'; ctx.lineWidth = 4; ctx.fillStyle = '#ffb13d';
+  for (const lx of [-20, 2]) {
+    ctx.beginPath(); ctx.moveTo(lx, 20); ctx.lineTo(lx-6, 39); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lx-7, 39); ctx.lineTo(lx-25, 45); ctx.lineTo(lx-4, 47); ctx.lineTo(lx+8, 42); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
   ctx.restore();
 }
 
@@ -209,13 +261,12 @@ function drawSnack(s) {
 
 function drawTourist(t) {
   ctx.save(); ctx.translate(t.x, t.y); ctx.strokeStyle = '#173042'; ctx.lineWidth = 4; ctx.fillStyle = 'rgba(23,48,66,.18)'; ctx.beginPath(); ctx.ellipse(0, 58, 42, 11, 0, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#f3b08d'; ctx.beginPath(); ctx.arc(0, -92, 22, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#7b4b28'; ctx.beginPath(); ctx.arc(-2, -105, 20, Math.PI, 0); ctx.fill(); ctx.stroke(); ctx.fillStyle = t.shirt; roundedRect(-27, -68, 54, 72, 14); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#4b9ed0'; roundedRect(-21, 4, 17, 52, 5); ctx.fill(); ctx.stroke(); roundedRect(5, 4, 17, 52, 5); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#173042'; ctx.fillRect(-10, -98, 5, 4); ctx.fillRect(7, -98, 5, 4); ctx.beginPath(); ctx.arc(2, -86, t.angry ? 9 : 7, 0, Math.PI); ctx.stroke();
-  const swing = Math.sin(frame / 6 + t.phase) * (t.angry ? 46 : 24); ctx.strokeStyle = '#173042'; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(24, -47); ctx.lineTo(58, -62 + swing); ctx.stroke();
-  if (t.kind === 'schirm') { ctx.fillStyle = '#e85050'; ctx.beginPath(); ctx.moveTo(56, -82 + swing); ctx.quadraticCurveTo(108, -112 + swing, 125, -49 + swing); ctx.lineTo(56, -50 + swing); ctx.closePath(); ctx.fill(); ctx.stroke(); }
-  else if (t.kind === 'wasser') { ctx.fillStyle = '#47b7e9'; roundedRect(51, -78 + swing, 24, 18, 5); ctx.fill(); ctx.stroke(); }
-  else if (t.kind === 'handy') { ctx.fillStyle = '#173042'; roundedRect(52, -75 + swing, 18, 30, 4); ctx.fill(); ctx.fillStyle = '#f3b08d'; ctx.beginPath(); ctx.arc(59, -58 + swing, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
-  else { ctx.fillStyle = '#f3b08d'; ctx.beginPath(); ctx.arc(61, -63 + swing, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
+  const swing = Math.sin(frame / 6 + t.phase) * (t.angry ? 46 : 24); const panic = t.swatWindow > 0 ? Math.sin(frame * .9) * 22 : 0; ctx.strokeStyle = '#173042'; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(24, -47); ctx.lineTo(58, -62 + swing + panic); ctx.stroke();
+  if (t.kind === 'schirm') { ctx.fillStyle = '#e85050'; ctx.beginPath(); ctx.moveTo(56, -82 + swing + panic); ctx.quadraticCurveTo(108, -112 + swing + panic, 125, -49 + swing + panic); ctx.lineTo(56, -50 + swing + panic); ctx.closePath(); ctx.fill(); ctx.stroke(); }
+  else if (t.kind === 'wasser') { ctx.fillStyle = '#47b7e9'; roundedRect(51, -78 + swing + panic, 24, 18, 5); ctx.fill(); ctx.stroke(); }
+  else if (t.kind === 'handy') { ctx.fillStyle = '#173042'; roundedRect(52, -75 + swing + panic, 18, 30, 4); ctx.fill(); ctx.fillStyle = '#f3b08d'; ctx.beginPath(); ctx.arc(59, -58 + swing + panic, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
+  else { ctx.fillStyle = '#f3b08d'; ctx.beginPath(); ctx.arc(61, -63 + swing + panic, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
   ctx.restore();
-  if (t.attack) drawAttack(t);
 }
 
 function drawAttack(t) {
@@ -240,18 +291,20 @@ function update() {
   if (gull.flapPulse > 0) gull.flapPulse *= .82;
   gull.energy = Math.min(1, gull.energy + .004);
 
-  const targetVx = input.joyX * 4.2;
-  const targetVy = input.joyY * 5.2;
-  gull.vx += (targetVx - gull.vx) * .075;
-  gull.vy += (targetVy - gull.vy) * .035;
-  gull.vy += .18 + Math.max(0, gull.vy) * .011; // gravity + sink drag
-  gull.vx *= .982;
-  gull.vy *= .988;
+  const air = Math.hypot(gull.vx, gull.vy);
+  const flapBoost = input.flapHeld ? 1.75 : 1;
+  const targetVx = input.joyX * 6.4 * flapBoost;
+  const targetVy = input.joyY * 6.1 * flapBoost;
+  gull.vx += (targetVx - gull.vx) * (input.flapHeld ? .105 : .065);
+  gull.vy += (targetVy - gull.vy) * (input.flapHeld ? .082 : .045);
+  gull.vy += .16 + Math.max(0, gull.vy) * .012; // Gewicht und Sinkgeschwindigkeit
+  gull.vx *= .976 - Math.min(.018, air * .0012); // Luftwiderstand
+  gull.vy *= .986 - Math.min(.014, air * .0008);
   gull.x += gull.vx;
   gull.y += gull.vy;
-  gull.rot += ((gull.vy * .045 + gull.vx * .018) - gull.rot) * .09;
-  gull.rot = Math.max(-.55, Math.min(.65, gull.rot));
-  gull.x = Math.max(90, Math.min(470, gull.x));
+  gull.rot += ((gull.vy * .052 + gull.vx * .022) - gull.rot) * .09;
+  gull.rot = Math.max(-.62, Math.min(.72, gull.rot));
+  gull.x = Math.max(80, Math.min(W - 120, gull.x));
   if (gull.y < 72) { gull.y = 72; gull.vy *= -.18; }
   if (gull.y > 505) { gull.y = 505; gull.vy = -2.8; }
 
@@ -274,32 +327,47 @@ function update() {
 function updateTourist(t) {
   t.x -= speed;
   t.cooldown--;
-  const near = Math.abs((t.x + 30) - gull.x) < 430 && gull.y > 145 && gull.y < 500;
+  const near = Math.abs((t.x + 30) - gull.x) < 290 && gull.y > 150 && gull.y < 520;
   t.angry = near;
   if (near && t.cooldown <= 0) {
-    const ax = t.x + 62;
-    const ay = t.y - 72;
-    const dx = gull.x - ax;
-    const dy = gull.y - ay;
-    const len = Math.max(1, Math.hypot(dx, dy));
-    t.attack = { x: ax, y: ay, vx: dx / len * (7.5 + level * .4), vy: dy / len * (7.5 + level * .4), kind: t.kind === 'wasser' ? 'water' : 'swat', life: 95 };
-    t.cooldown = Math.max(28, 82 - level * 5);
+    t.swatWindow = 26;
+    t.cooldown = Math.max(34, 92 - level * 5);
   }
-  if (t.attack) { t.attack.x += t.attack.vx; t.attack.y += t.attack.vy; t.attack.life--; if (t.attack.life <= 0 || t.attack.x < -50 || t.attack.y < 0 || t.attack.y > H) t.attack = null; }
+  if (t.swatWindow > 0) t.swatWindow--;
 }
 
 function collectSnacks() {
   for (let i = snacks.length - 1; i >= 0; i--) {
     const s = snacks[i]; const sy = s.y + Math.sin(frame / 10 + s.wobble) * 7; const dx = gull.x + 44 - s.x; const dy = gull.y - sy;
-    if (dx * dx + dy * dy < (gull.r + s.r) * (gull.r + s.r)) { score += s.value; burst(s.x, sy, s.type === 'burger' ? '#f2c349' : '#f28abc'); snacks.splice(i, 1); }
+    if (dx * dx + dy * dy < (gull.r + s.r) * (gull.r + s.r)) {
+      score += s.value;
+      snackStreak++;
+      if (snackStreak >= 3) {
+        if (health < 6) { health += 1; burst(gull.x, gull.y - 28, '#d7233f', 16); }
+        snackStreak = 0;
+      }
+      burst(s.x, sy, s.type === 'burger' ? '#f2c349' : '#f28abc');
+      snacks.splice(i, 1);
+    }
   }
 }
 
 function checkHits() {
   if (invincible > 0) return;
   for (const t of tourists) {
-    if (circleRectCollision(gull.x, gull.y, gull.r, t.x - 35, t.y - 124, 105, 178) || (t.attack && Math.hypot(gull.x - t.attack.x, gull.y - t.attack.y) < gull.r + 12)) {
-      lives--; invincible = 85; gull.vy = -8; gull.vx = -3.5; burst(gull.x, gull.y, '#ffffff', 18); if (t.attack) t.attack = null; if (lives <= 0) endGame(); break;
+    const bodyHit = circleRectCollision(gull.x, gull.y, gull.r, t.x - 31, t.y - 122, 86, 165);
+    const handX = t.x + 61;
+    const handY = t.y - 64 + Math.sin(frame / 6 + t.phase) * (t.angry ? 46 : 24);
+    const swatHit = t.swatWindow > 0 && Math.hypot(gull.x - handX, gull.y - handY) < gull.r + 25;
+    if (bodyHit || swatHit) {
+      health = Math.max(0, health - 2);
+      snackStreak = 0;
+      invincible = 85;
+      gull.vy = -8;
+      gull.vx = -4.2;
+      burst(gull.x, gull.y, '#ffffff', 18);
+      if (health <= 0) endGame();
+      break;
     }
   }
 }
@@ -360,10 +428,10 @@ overlayMusicBtn.addEventListener('pointerup', toggleMusic);
 flapBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); input.flapHeld = true; flapBtn.classList.add('pressed'); flap(); });
 flapBtn.addEventListener('pointerup', () => { input.flapHeld = false; flapBtn.classList.remove('pressed'); });
 flapBtn.addEventListener('pointercancel', () => { input.flapHeld = false; flapBtn.classList.remove('pressed'); });
-joystick.addEventListener('pointerdown', (e) => { e.preventDefault(); joystick.setPointerCapture(e.pointerId); moveStick(e.clientX, e.clientY); });
-joystick.addEventListener('pointermove', (e) => { if (e.buttons) moveStick(e.clientX, e.clientY); });
-joystick.addEventListener('pointerup', resetStick);
-joystick.addEventListener('pointercancel', resetStick);
+joystick.addEventListener('pointerdown', (e) => { e.preventDefault(); input.joyPointer = e.pointerId; joystick.setPointerCapture(e.pointerId); moveStick(e.clientX, e.clientY); });
+joystick.addEventListener('pointermove', (e) => { if (input.joyPointer === e.pointerId) moveStick(e.clientX, e.clientY); });
+joystick.addEventListener('pointerup', (e) => { if (input.joyPointer === e.pointerId) { input.joyPointer = null; resetStick(); } });
+joystick.addEventListener('pointercancel', (e) => { if (input.joyPointer === e.pointerId) { input.joyPointer = null; resetStick(); } });
 window.addEventListener('keydown', (e) => { input.keys.add(e.code); if (e.code === 'Space') { e.preventDefault(); flap(); } if (e.key.toLowerCase() === 'm') toggleMusic(e); });
 window.addEventListener('keyup', (e) => { input.keys.delete(e.code); });
 setInterval(() => {
@@ -371,7 +439,7 @@ setInterval(() => {
   const verticalKeys = input.keys.has('ArrowDown') || input.keys.has('KeyS') || input.keys.has('ArrowUp') || input.keys.has('KeyW');
   if (horizontalKeys) input.joyX = (input.keys.has('ArrowRight') || input.keys.has('KeyD') ? 1 : 0) - (input.keys.has('ArrowLeft') || input.keys.has('KeyA') ? 1 : 0);
   if (verticalKeys) input.joyY = (input.keys.has('ArrowDown') || input.keys.has('KeyS') ? 1 : 0) - (input.keys.has('ArrowUp') || input.keys.has('KeyW') ? 1 : 0);
-  if (!horizontalKeys && !verticalKeys && document.pointerLockElement == null && state !== 'playing') resetStick();
+  if (!horizontalKeys && !verticalKeys && input.joyPointer == null) resetStick();
 }, 16);
 document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 setMusicLabel(); render(); loop();

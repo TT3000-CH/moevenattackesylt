@@ -1,32 +1,30 @@
-# Möwenpik V4
+# Möwenpik V5
 
-Browsergame im Comicstyle für GitHub Pages.
+Browsergame für GitHub Pages.
 
-## Neu in V4
+## Wichtig für GitHub Pages
 
-- Hochgeladenes Lied als Musik integriert: `assets/moewenpik.mp3`
-- Joystick rechts unten zum aerodynamischen Steuern
-- Flügelschlagknopf links unten für zusätzlichen Auftrieb
-- Touristen können sich aktiv wehren
-- Leben links oben als Herzen
-- Aerodynamischeres Flugmodell mit Trägheit, Sinkrate, Auftrieb, Rotation und Energiemanagement
-- Level steigt alle 150 Punkte: mehr Tempo, mehr Touristen, häufigere Angriffe
+Die Musik liegt in `assets/moewenpik.mp3`. Lade deshalb nicht nur `index.html`, sondern den kompletten entpackten Inhalt hoch:
+
+- `index.html`
+- `style.css`
+- `game.js`
+- Ordner `assets` inklusive `moewenpik.mp3`
+
+Die Dateien müssen im Root deines GitHub-Pages-Branches liegen, also direkt im Repository-Hauptordner. Wenn du stattdessen den ganzen Ordner `moewenpik-v5` hochlädst, liegt `index.html` eine Ebene zu tief und GitHub Pages findet das Spiel nicht korrekt.
+
+## Änderungen V5
+
+- Touristen schiessen nicht mehr. Sie fuchteln nur noch mit Händen, Handy oder Schirm.
+- Joystick funktioniert in alle Richtungen.
+- Flügelschlag beeinflusst Geschwindigkeit und Wendigkeit.
+- Möwe grafisch realistischer überarbeitet.
+- Herzen werden in halben Herzen geführt.
+- Nach drei erfolgreichen Snacks in Folge wird ein verlorenes Herz um ein halbes Herz aufgefüllt.
+- Level steigt weiterhin alle 150 Punkte.
 
 ## Steuerung
 
-Mobile:
-- Rechts unten: Joystick
-- Links unten: Flügelschlag
-
-Desktop:
-- WASD oder Pfeiltasten zum Steuern
-- Leertaste für Flügelschlag
-- M für Musik ein/aus
-
-## GitHub Pages Deployment
-
-1. ZIP entpacken.
-2. Alle Dateien und den Ordner `assets` ins Repository hochladen.
-3. Wichtig: `index.html` muss direkt im Hauptordner des Repository liegen.
-4. Settings → Pages → Deploy from branch → `main` → `/root`.
-5. Nach dem Deployment die Seite mit `?v=4` neu laden, falls noch Cache sichtbar ist.
+- Rechts unten: Joystick in alle Richtungen
+- Links unten: Flügelschlag / Schub
+- Desktop: WASD oder Pfeiltasten, Leertaste für Flügelschlag, M für Musik
