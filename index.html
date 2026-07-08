@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Möwenpik - Sylt Snack Snatcher</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="game-shell">
+    <section class="topbar" aria-label="Spielinformationen">
+      <div class="brand">Möwenpik</div>
+      <div class="hud">
+        <span>Punkte: <strong id="score">0</strong></span>
+        <span>Leben: <strong id="lives">3</strong></span>
+        <span>Highscore: <strong id="highscore">0</strong></span>
+      </div>
+    </section>
+
+    <section class="canvas-wrap">
+      <canvas id="game" width="900" height="520" aria-label="Möwenpik Browsergame"></canvas>
+      <div id="overlay" class="overlay">
+        <div class="card">
+          <div class="badge">Comic Beach Game V1</div>
+          <h1>Möwenpik</h1>
+          <p class="lead">Du bist die frechste Möwe auf Sylt. Klaue Glace und Burger von Touristen, bevor sie dich abwehren.</p>
+          <div class="rules">
+            <p><strong>Tap / Klick / Leertaste:</strong> Fliegen</p>
+            <p><strong>Snack treffen:</strong> +10 Glace, +15 Burger</p>
+            <p><strong>Tourist berühren:</strong> -1 Leben</p>
+          </div>
+          <button id="startBtn">Spiel starten</button>
+          <p class="hint">Mobile-first. Läuft direkt auf GitHub Pages.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="controls-note">
+      <span>Steuerung: Tippen, Klicken oder Leertaste.</span>
+    </section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
