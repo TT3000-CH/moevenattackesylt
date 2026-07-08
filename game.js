@@ -6,6 +6,7 @@ const highscoreEl = document.getElementById('highscore');
 const overlay = document.getElementById('overlay');
 const startBtn = document.getElementById('startBtn');
 const musicBtn = document.getElementById('musicBtn');
+const overlayMusicBtn = document.getElementById('overlayMusicBtn');
 
 const W = canvas.width;
 const H = canvas.height;
@@ -64,6 +65,11 @@ function updateHud() {
 function flap() {
   if (state === 'start' || state === 'gameover') { resetGame(); return; }
   gull.vy = -10.4;
+}
+
+function startGameFromButton() {
+  resetGame();
+  unlockAudio();
 }
 
 function spawnSnack() {
@@ -447,11 +453,21 @@ function scheduleMusic() {
   }
 }
 
-function toggleMusic() {
+function unlockAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function setMusicLabel() {
+  musicBtn.textContent = musicOn ? 'Musik an' : 'Musik aus';
+  if (overlayMusicBtn) overlayMusicBtn.textContent = musicOn ? 'Musik aus' : 'Musik an';
+}
+
+function toggleMusic(e) {
+  if (e) e.preventDefault();
+  unlockAudio();
   musicOn = !musicOn;
-  musicBtn.textContent = musicOn ? 'Musik: an' : 'Musik: aus';
+  setMusicLabel();
   if (musicOn) {
     nextNoteTime = audioCtx.currentTime;
     noteIndex = 0;
@@ -463,13 +479,15 @@ function toggleMusic() {
   }
 }
 
-startBtn.addEventListener('click', resetGame);
-musicBtn.addEventListener('click', toggleMusic);
+startBtn.addEventListener('pointerup', startGameFromButton);
+musicBtn.addEventListener('pointerup', toggleMusic);
+if (overlayMusicBtn) overlayMusicBtn.addEventListener('pointerup', toggleMusic);
 window.addEventListener('keydown', (e) => {
   if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); flap(); }
   if (e.key.toLowerCase() === 'm') toggleMusic();
 });
 canvas.addEventListener('pointerdown', (e) => { e.preventDefault(); flap(); });
+document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
 render();
 loop();

@@ -1,25 +1,22 @@
-# Möwenpik V2
+# Möwenpik V3
 
-Ein kleines browserfähiges Comic-Beach-Game für GitHub Pages.
+Browsergame für GitHub Pages.
 
-## Spielidee
-Du spielst eine Möwe auf Sylt. Auf dem Holzbohlenweg am Strand klaust du Touristen Glace und Burger aus der Hand. Jeder Snack bringt Punkte. Touristen und Abwehrbewegungen kosten Leben.
+## Änderungen gegenüber V2
 
-## Steuerung
-- Desktop: Leertaste, Pfeil hoch oder Klick
-- Mobile: Tippen
-- Musik: Button oben rechts oder Taste M
+- echtes iPhone-Landscape-Layout mit `100svh` und Safe-Area-Unterstützung
+- Portrait-Sperrhinweis: Spiel ist bewusst auf Querformat ausgelegt
+- Startbutton bleibt im Landscape-Modus sichtbar, auch auf kleinen iPhone-Höhen
+- Spielfeld füllt das verfügbare iPhone-Querformat besser aus
+- Musik kann direkt im Startscreen oder oben im HUD eingeschaltet werden
+- Audio wird erst nach Nutzer-Tap initialisiert, damit iOS/Safari die Wiedergabe erlaubt
 
-## Neuerungen in V2
-- Querformat / 16:9 Layout
-- Grösseres Canvas: 1280 x 720
-- Realistischere Sylt-Strandszene mit Meer, Dünen, Strandhafer, Holzbohlenweg und Strandkörben
-- Überarbeitete Möwe, Touristen, Snacks und Partikeleffekte
-- Eigener lustiger Musikloop per WebAudio, keine externen Audiodateien nötig
+## Veröffentlichung auf GitHub Pages
 
-## GitHub Pages
-1. Neues Repository erstellen.
-2. `index.html`, `style.css`, `game.js` und `README.md` hochladen.
-3. In GitHub unter `Settings > Pages` als Source `Deploy from a branch` wählen.
-4. Branch `main` und Ordner `/root` auswählen.
-5. Nach kurzer Zeit ist das Game im Browser erreichbar.
+1. ZIP entpacken.
+2. Den Inhalt des Ordners ins bestehende Repository hochladen.
+3. Bestehende Dateien überschreiben.
+4. Committen.
+5. GitHub Pages neu laden.
+
+Wichtig: Nicht die ZIP-Datei hochladen, sondern die enthaltenen Dateien `index.html`, `style.css`, `game.js` und `README.md`.

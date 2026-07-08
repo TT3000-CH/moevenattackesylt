@@ -2,7 +2,10 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Möwenpik - Sylt Snack Snatcher</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -11,35 +14,40 @@
     <section class="topbar" aria-label="Spielinformationen">
       <div class="brand">Möwenpik</div>
       <div class="hud">
-        <span>Punkte: <strong id="score">0</strong></span>
-        <span>Leben: <strong id="lives">3</strong></span>
-        <span>Highscore: <strong id="highscore">0</strong></span>
-        <button id="musicBtn" class="mini-btn" aria-label="Musik ein- oder ausschalten">Musik: aus</button>
+        <span>Punkte <strong id="score">0</strong></span>
+        <span>Leben <strong id="lives">3</strong></span>
+        <span>Highscore <strong id="highscore">0</strong></span>
+        <button id="musicBtn" class="mini-btn" type="button" aria-label="Musik ein- oder ausschalten">Musik aus</button>
       </div>
     </section>
 
-    <section class="canvas-wrap landscape-only">
+    <section class="canvas-wrap">
       <canvas id="game" width="1280" height="720" aria-label="Möwenpik Browsergame"></canvas>
+
       <div id="overlay" class="overlay">
         <div class="card">
-          <div class="badge">Comic Beach Game V2</div>
+          <div class="badge">Landscape V3</div>
           <h1>Möwenpik</h1>
-          <p class="lead">Sylt, Strand, Holzbohlenweg. Du bist die frechste Möwe der Insel und schnappst Touristen Glace und Burger aus der Hand.</p>
+          <p class="lead">Flieg über den Sylt-Holzbohlenweg, schnapp Glace und Burger und weich den genervten Touristen aus.</p>
           <div class="rules">
-            <p><strong>Tap / Klick / Leertaste:</strong> Fliegen</p>
-            <p><strong>Snack treffen:</strong> +10 Glace, +15 Burger</p>
-            <p><strong>Tourist / Abwehr berühren:</strong> -1 Leben</p>
-            <p><strong>Musik:</strong> eigener lustiger Beach-Loop, nach Start zuschaltbar</p>
+            <p><strong>Tap / Klick / Leertaste:</strong> Flattern</p>
+            <p><strong>Glace:</strong> +10 Punkte · <strong>Burger:</strong> +15 Punkte</p>
+            <p><strong>Tourist trifft dich:</strong> -1 Leben</p>
           </div>
-          <button id="startBtn">Spiel starten</button>
-          <p class="hint">Querformat empfohlen. Mobile: Gerät drehen und tippen.</p>
+          <div class="start-row">
+            <button id="startBtn" type="button">Spiel starten</button>
+            <button id="overlayMusicBtn" class="secondary-btn" type="button">Musik an</button>
+          </div>
+          <p class="hint">iPhone: Gerät ins Querformat drehen. Danach auf «Spiel starten» tippen.</p>
         </div>
       </div>
-      <div class="rotate-hint">Bitte ins Querformat drehen</div>
-    </section>
 
-    <section class="controls-note">
-      <span>Steuerung: Tippen, Klicken oder Leertaste. Musik über den Button oben rechts.</span>
+      <div class="rotate-hint">
+        <div>
+          <strong>Bitte iPhone drehen</strong>
+          <span>Möwenpik ist auf Querformat ausgelegt.</span>
+        </div>
+      </div>
     </section>
   </main>
 
