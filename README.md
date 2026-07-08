@@ -1,22 +1,32 @@
-# Möwenpik V3
+# Möwenpik V4
 
-Browsergame für GitHub Pages.
+Browsergame im Comicstyle für GitHub Pages.
 
-## Änderungen gegenüber V2
+## Neu in V4
 
-- echtes iPhone-Landscape-Layout mit `100svh` und Safe-Area-Unterstützung
-- Portrait-Sperrhinweis: Spiel ist bewusst auf Querformat ausgelegt
-- Startbutton bleibt im Landscape-Modus sichtbar, auch auf kleinen iPhone-Höhen
-- Spielfeld füllt das verfügbare iPhone-Querformat besser aus
-- Musik kann direkt im Startscreen oder oben im HUD eingeschaltet werden
-- Audio wird erst nach Nutzer-Tap initialisiert, damit iOS/Safari die Wiedergabe erlaubt
+- Hochgeladenes Lied als Musik integriert: `assets/moewenpik.mp3`
+- Joystick rechts unten zum aerodynamischen Steuern
+- Flügelschlagknopf links unten für zusätzlichen Auftrieb
+- Touristen können sich aktiv wehren
+- Leben links oben als Herzen
+- Aerodynamischeres Flugmodell mit Trägheit, Sinkrate, Auftrieb, Rotation und Energiemanagement
+- Level steigt alle 150 Punkte: mehr Tempo, mehr Touristen, häufigere Angriffe
 
-## Veröffentlichung auf GitHub Pages
+## Steuerung
+
+Mobile:
+- Rechts unten: Joystick
+- Links unten: Flügelschlag
+
+Desktop:
+- WASD oder Pfeiltasten zum Steuern
+- Leertaste für Flügelschlag
+- M für Musik ein/aus
+
+## GitHub Pages Deployment
 
 1. ZIP entpacken.
-2. Den Inhalt des Ordners ins bestehende Repository hochladen.
-3. Bestehende Dateien überschreiben.
-4. Committen.
-5. GitHub Pages neu laden.
-
-Wichtig: Nicht die ZIP-Datei hochladen, sondern die enthaltenen Dateien `index.html`, `style.css`, `game.js` und `README.md`.
+2. Alle Dateien und den Ordner `assets` ins Repository hochladen.
+3. Wichtig: `index.html` muss direkt im Hauptordner des Repository liegen.
+4. Settings → Pages → Deploy from branch → `main` → `/root`.
+5. Nach dem Deployment die Seite mit `?v=4` neu laden, falls noch Cache sichtbar ist.

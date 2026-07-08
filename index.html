@@ -6,7 +6,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Möwenpik - Sylt Snack Snatcher</title>
+  <title>Möwenpik V4</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,31 +14,39 @@
     <section class="topbar" aria-label="Spielinformationen">
       <div class="brand">Möwenpik</div>
       <div class="hud">
+        <span class="hearts" id="hearts" aria-label="Leben">♥ ♥ ♥</span>
         <span>Punkte <strong id="score">0</strong></span>
-        <span>Leben <strong id="lives">3</strong></span>
+        <span>Level <strong id="level">1</strong></span>
         <span>Highscore <strong id="highscore">0</strong></span>
-        <button id="musicBtn" class="mini-btn" type="button" aria-label="Musik ein- oder ausschalten">Musik aus</button>
+        <button id="musicBtn" class="mini-btn" type="button">Musik aus</button>
       </div>
     </section>
 
     <section class="canvas-wrap">
       <canvas id="game" width="1280" height="720" aria-label="Möwenpik Browsergame"></canvas>
 
+      <div id="touchControls" class="touch-controls hidden" aria-hidden="false">
+        <button id="flapBtn" class="flap-btn" type="button">Flügel<br>schlag</button>
+        <div id="joystick" class="joystick">
+          <div id="stick" class="stick"></div>
+        </div>
+      </div>
+
       <div id="overlay" class="overlay">
         <div class="card">
-          <div class="badge">Landscape V3</div>
+          <div class="badge">Landscape V4</div>
           <h1>Möwenpik</h1>
-          <p class="lead">Flieg über den Sylt-Holzbohlenweg, schnapp Glace und Burger und weich den genervten Touristen aus.</p>
+          <p class="lead">Klau Glace und Burger auf Sylt. Flieg mit Joystick, gib Schub mit Flügelschlag und weich genervten Touristen aus.</p>
           <div class="rules">
-            <p><strong>Tap / Klick / Leertaste:</strong> Flattern</p>
-            <p><strong>Glace:</strong> +10 Punkte · <strong>Burger:</strong> +15 Punkte</p>
-            <p><strong>Tourist trifft dich:</strong> -1 Leben</p>
+            <p><strong>Rechts:</strong> Joystick zum Steuern</p>
+            <p><strong>Links:</strong> Flügelschlag für Auftrieb und Tempo</p>
+            <p><strong>Alle 150 Punkte:</strong> neues Level, mehr Tempo und mehr Gegenwehr</p>
           </div>
           <div class="start-row">
             <button id="startBtn" type="button">Spiel starten</button>
             <button id="overlayMusicBtn" class="secondary-btn" type="button">Musik an</button>
           </div>
-          <p class="hint">iPhone: Gerät ins Querformat drehen. Danach auf «Spiel starten» tippen.</p>
+          <p class="hint">iPhone: Gerät ins Querformat drehen. Musik startet auf iOS erst nach einem Tap.</p>
         </div>
       </div>
 
@@ -51,6 +59,7 @@
     </section>
   </main>
 
+  <audio id="bgMusic" src="assets/moewenpik.mp3" preload="auto" loop playsinline></audio>
   <script src="game.js"></script>
 </body>
 </html>
