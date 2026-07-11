@@ -1,30 +1,17 @@
-# Möwenpik V5
+# Möwenpik V8 – Single-File
 
-Browsergame für GitHub Pages.
-
-## Wichtig für GitHub Pages
-
-Die Musik liegt in `assets/moewenpik.mp3`. Lade deshalb nicht nur `index.html`, sondern den kompletten entpackten Inhalt hoch:
+Diese Version besteht nur aus einer Datei:
 
 - `index.html`
-- `style.css`
-- `game.js`
-- Ordner `assets` inklusive `moewenpik.mp3`
 
-Die Dateien müssen im Root deines GitHub-Pages-Branches liegen, also direkt im Repository-Hauptordner. Wenn du stattdessen den ganzen Ordner `moewenpik-v5` hochlädst, liegt `index.html` eine Ebene zu tief und GitHub Pages findet das Spiel nicht korrekt.
+Alle Styles, Spiellogik, das Sylt-Hintergrundbild und der Musiktrack sind direkt in der HTML-Datei eingebettet.
 
-## Änderungen V5
+## GitHub Pages vom iPhone
 
-- Touristen schiessen nicht mehr. Sie fuchteln nur noch mit Händen, Handy oder Schirm.
-- Joystick funktioniert in alle Richtungen.
-- Flügelschlag beeinflusst Geschwindigkeit und Wendigkeit.
-- Möwe grafisch realistischer überarbeitet.
-- Herzen werden in halben Herzen geführt.
-- Nach drei erfolgreichen Snacks in Folge wird ein verlorenes Herz um ein halbes Herz aufgefüllt.
-- Level steigt weiterhin alle 150 Punkte.
+1. `moewenpik-v8-singlefile.zip` in der Dateien-App entpacken.
+2. Im bestehenden GitHub-Repository die bisherige `index.html` öffnen oder löschen.
+3. Über **Add file → Upload files** die neue `index.html` hochladen.
+4. **Commit changes** wählen.
+5. Die GitHub-Pages-Seite nach dem Deployment mit `?v=8` öffnen, damit Safari nicht die alte Datei aus dem Cache lädt.
 
-## Steuerung
-
-- Rechts unten: Joystick in alle Richtungen
-- Links unten: Flügelschlag / Schub
-- Desktop: WASD oder Pfeiltasten, Leertaste für Flügelschlag, M für Musik
+Beispiel: `https://DEINNAME.github.io/DEIN-REPOSITORY/?v=8`
