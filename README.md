@@ -1,17 +1,16 @@
-# Möwenpik V8 – Single-File
+# Möwenpik V9 – Single-File
 
-Diese Version besteht nur aus einer Datei:
+Für GitHub Pages nur `index.html` ins Hauptverzeichnis des Repositorys hochladen.
 
-- `index.html`
+## Steuerung
+- Joystick rechts: Flugrichtung
+- Flügelschlag links: Auftrieb und Beschleunigung
+- Sturzflug: Angriff und Tempo
 
-Alle Styles, Spiellogik, das Sylt-Hintergrundbild und der Musiktrack sind direkt in der HTML-Datei eingebettet.
-
-## GitHub Pages vom iPhone
-
-1. `moewenpik-v8-singlefile.zip` in der Dateien-App entpacken.
-2. Im bestehenden GitHub-Repository die bisherige `index.html` öffnen oder löschen.
-3. Über **Add file → Upload files** die neue `index.html` hochladen.
-4. **Commit changes** wählen.
-5. Die GitHub-Pages-Seite nach dem Deployment mit `?v=8` öffnen, damit Safari nicht die alte Datei aus dem Cache lädt.
-
-Beispiel: `https://DEINNAME.github.io/DEIN-REPOSITORY/?v=8`
+## Neu in V9
+- Angriffstiming und Risiko-/Belohnungsmechanik
+- vier Touristtypen
+- fünf Snacks mit unterschiedlichen Punktwerten
+- Combo, Frenzy, Missionen und Power-ups
+- gespeicherter Highscore und Gesamtfortschritt
+- Musik und Hintergrund vollständig eingebettet
